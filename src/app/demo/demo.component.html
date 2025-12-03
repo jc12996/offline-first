@@ -1,0 +1,123 @@
+<div class="demo-container">
+  <!-- Offline Mode Banner -->
+  <div *ngIf="!isOnline" class="offline-banner">
+    <span class="offline-icon">📴</span>
+    <span>Offline Mode - Changes will sync when connection is restored</span>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="showSuccessMessage" class="success-message">
+    <span class="success-icon">✓</span>
+    {{ successMessage }}
+  </div>
+
+  <!-- Sync Status -->
+  <div *ngIf="syncStatus.isSyncing" class="sync-status">
+    <div class="sync-progress">
+      <span>Syncing... {{ syncStatus.completedItems }} / {{ syncStatus.totalItems }}</span>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="(syncStatus.completedItems / syncStatus.totalItems) * 100"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <!-- Left Column: Form -->
+    <div class="left-column">
+      <!-- Session Note Form -->
+      <div class="card">
+        <h2>Submit Session Note</h2>
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="clientName">Client Name</label>
+            <input
+              type="text"
+              id="clientName"
+              [(ngModel)]="formData.clientName"
+              name="clientName"
+              required
+              placeholder="Enter client name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="shiftDate">Shift Date</label>
+            <input
+              type="date"
+              id="shiftDate"
+              [(ngModel)]="formData.shiftDate"
+              name="shiftDate"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="note">Session Note</label>
+            <textarea
+              id="note"
+              [(ngModel)]="formData.note"
+              name="note"
+              required
+              rows="5"
+              placeholder="Enter session notes..."
+            ></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="!formData.clientName || !formData.note">
+            Submit Session Note
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: Session Notes -->
+    <div class="right-column">
+      <!-- Existing Session Notes -->
+      <div class="card">
+        <h2>Session Notes ({{ sessionNotes.length }})</h2>
+        <div *ngIf="sessionNotes.length === 0" class="empty-state">
+          No session notes yet
+        </div>
+        <div *ngFor="let note of sessionNotes; trackBy: trackByNoteId" class="note-item">
+          <!-- Edit Mode -->
+          <div *ngIf="editingNote?.id === note.id" class="edit-mode">
+            <div class="form-group">
+              <label>Client Name</label>
+              <input type="text" [(ngModel)]="editFormData.clientName" required />
+            </div>
+            <div class="form-group">
+              <label>Shift Date</label>
+              <input type="date" [(ngModel)]="editFormData.shiftDate" required />
+            </div>
+            <div class="form-group">
+              <label>Note</label>
+              <textarea [(ngModel)]="editFormData.note" rows="3" required></textarea>
+            </div>
+            <div class="edit-actions">
+              <button (click)="saveEdit()" class="save-btn">Save</button>
+              <button (click)="cancelEdit()" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Display Mode -->
+          <div *ngIf="editingNote?.id !== note.id">
+            <div class="note-header">
+              <strong>{{ note.clientName }}</strong>
+              <span class="note-date">{{ note.shiftDate }}</span>
+            </div>
+            <div class="note-content">{{ note.note }}</div>
+            <div class="note-footer">
+              <div class="note-timestamp">{{ formatTimestamp(note.timestamp) }}</div>
+              <div class="note-actions">
+                <button (click)="startEdit(note)" class="edit-btn">Edit</button>
+                <button (click)="deleteNote(note)" class="delete-btn">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
