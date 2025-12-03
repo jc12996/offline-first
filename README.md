@@ -6,6 +6,8 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 John Christiansen
 
+[Demo Loom Video](https://www.loom.com/share/0d5248aff20b45a592bae7206193843e)
+
 ## Development server
 
 To start a local development server, run:
